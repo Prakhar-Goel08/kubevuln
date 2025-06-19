@@ -6,7 +6,9 @@ The Kubevuln component is an in-cluster component of the Kubescape security plat
 It [scans container images for vulnerabilities](https://www.armosec.io/blog/code-repository-container-image-registry-scanning/?utm_source=github&utm_medium=repository), using Grype as its engine.
 
 ## Build Kubevuln
-To build kubevuln with its dependencies run: `make`
+To build kubevuln with its dependencies run: `make build-cli`
+## RUN Kubevuln
+To run kubevuln : `./kubevuln-cli -image <image>`
 
 ## Configuration
 1. Load config file using the `CONFIG` environment variable
