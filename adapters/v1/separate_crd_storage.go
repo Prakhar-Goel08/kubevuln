@@ -146,7 +146,7 @@ func (s *SeparateCRDStorageAdapter) saveDiveReportToCRD(ctx context.Context, ima
 			"apiVersion": "kubevuln.io/v1",
 			"kind":       "DiveScanning",
 			"metadata": map[string]interface{}{
-				"name":      fmt.Sprintf("%s-%s-dive", sanitizedImageName, sanitizedJobID),
+				"name":      fmt.Sprintf("%s-%s", sanitizedImageName, sanitizedJobID),
 				"namespace": s.namespace,
 				"labels": map[string]interface{}{
 					"image":    sanitizedImageName,
@@ -226,7 +226,7 @@ func (s *SeparateCRDStorageAdapter) saveSecretReportToCRD(ctx context.Context, i
 			"apiVersion": "kubevuln.io/v1",
 			"kind":       "SecretScanning",
 			"metadata": map[string]interface{}{
-				"name":      fmt.Sprintf("%s-%s-secret", sanitizedImageName, sanitizedJobID),
+				"name":      fmt.Sprintf("%s-%s", sanitizedImageName, sanitizedJobID),
 				"namespace": s.namespace,
 				"labels": map[string]interface{}{
 					"image":    sanitizedImageName,

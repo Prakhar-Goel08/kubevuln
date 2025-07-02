@@ -157,7 +157,7 @@ func (s *ScanReportStorageAdapter) createDiveCRD(ctx context.Context, imageTag, 
 			"apiVersion": "kubevuln.io/v1",
 			"kind":       "ScanReport",
 			"metadata": map[string]interface{}{
-				"name":      fmt.Sprintf("%s-%s-dive", sanitizedImageName, sanitizedJobID), // Only dive in the name
+				"name":      fmt.Sprintf("%s-%s", sanitizedImageName, sanitizedJobID), // Unified name
 				"namespace": s.namespace,
 				"labels": map[string]interface{}{
 					"image":      sanitizedImageName,
@@ -210,7 +210,7 @@ func (s *ScanReportStorageAdapter) createTrufflehogCRD(ctx context.Context, imag
 			"apiVersion": "kubevuln.io/v1",
 			"kind":       "ScanReport",
 			"metadata": map[string]interface{}{
-				"name":      fmt.Sprintf("%s-%s-trufflehog", sanitizedImageName, sanitizedJobID), // Only trufflehog in the name
+				"name":      fmt.Sprintf("%s-%s", sanitizedImageName, sanitizedJobID), // Unified name
 				"namespace": s.namespace,
 				"labels": map[string]interface{}{
 					"image":      sanitizedImageName,
