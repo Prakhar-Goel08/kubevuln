@@ -1,0 +1,95 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: divescannings.kubevuln.io
+spec:
+  group: kubevuln.io
+  names:
+    kind: DiveScanning
+    listKind: DiveScanningList
+    plural: divescannings
+    singular: divescanning
+    shortNames:
+    - ds
+  scope: Namespaced
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              image:
+                type: string
+                description: "The image that was scanned"
+              namespace:
+                type: string
+                description: "The namespace where the scan was performed"
+              timestamp:
+                type: string
+                description: "The time when the scan was performed"
+              clusterName:
+                type: string
+                description: "The cluster where the scan was performed"
+              jobID:
+                type: string
+                description: "Unique identifier for the scan job"
+              diveReport:
+                type: string
+                description: "Complete dive analysis report as JSON string"
+              imageSize:
+                type: integer
+                description: "Size of the analyzed image in bytes"
+              layers:
+                type: integer
+                description: "Number of layers in the image"
+              efficiencyScore:
+                type: number
+                description: "Dive efficiency score"
+              reportPath:
+                type: string
+                description: "Path to the local report files"
+            required:
+            - image
+            - namespace
+            - timestamp
+            - jobID
+            - diveReport
+          status:
+            type: object
+            properties:
+              status:
+                type: string
+                description: "Current status of the scan report"
+              lastUpdated:
+                type: string
+                description: "Last time the status was updated"
+    additionalPrinterColumns:
+    - name: Image
+      type: string
+      jsonPath: .spec.image
+    - name: Namespace
+      type: string
+      jsonPath: .spec.namespace
+    - name: Image Size
+      type: integer
+      jsonPath: .spec.imageSize
+    - name: Layers
+      type: integer
+      jsonPath: .spec.layers
+    - name: Efficiency
+      type: number
+      jsonPath: .spec.efficiencyScore
+    - name: Timestamp
+      type: date
+      jsonPath: .spec.timestamp
+    - name: Status
+      type: string
+      jsonPath: .status.status
+    - name: Age
+      type: date
+      jsonPath: .metadata.creationTimestamp 

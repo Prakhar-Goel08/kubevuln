@@ -43,7 +43,7 @@ type SyftAdapter struct {
 	scanEmbeddedSBOMs bool
 	diveAdapter       *DiveAdapter
 	truffleHogAdapter *TruffleHogAdapter
-	storage           *ScanReportStorageAdapter
+	storage           *SeparateCRDStorageAdapter
 }
 
 const digestDelim = "@"
@@ -51,7 +51,7 @@ const digestDelim = "@"
 var _ ports.SBOMCreator = (*SyftAdapter)(nil)
 
 // NewSyftAdapter initializes the SyftAdapter struct
-func NewSyftAdapter(scanTimeout time.Duration, maxImageSize int64, maxSBOMSize int, scanEmbeddedSBOMs bool, storage *ScanReportStorageAdapter) *SyftAdapter {
+func NewSyftAdapter(scanTimeout time.Duration, maxImageSize int64, maxSBOMSize int, scanEmbeddedSBOMs bool, storage *SeparateCRDStorageAdapter) *SyftAdapter {
 	return &SyftAdapter{
 		maxImageSize:      maxImageSize,
 		maxSBOMSize:       maxSBOMSize,

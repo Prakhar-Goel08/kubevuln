@@ -1,0 +1,137 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: imagelayers.kubevuln.kubescape.io
+spec:
+  group: kubevuln.kubescape.io
+  names:
+    kind: ImageLayer
+    listKind: ImageLayerList
+    plural: imagelayers
+    singular: imagelayer
+    shortNames:
+    - il
+  scope: Namespaced
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              imageTag:
+                type: string
+                description: The image tag that was scanned
+              imageName:
+                type: string
+                description: The name of the image
+              scanTime:
+                type: string
+                format: date-time
+                description: When the scan was performed
+              jobID:
+                type: string
+                description: The job ID for this scan
+              diveReport:
+                type: object
+                description: The dive scan results
+              reportPath:
+                type: string
+                description: Path to the local report file (fallback)
+            required:
+            - imageTag
+            - imageName
+            - scanTime
+            - jobID
+            - diveReport
+          status:
+            type: object
+            properties:
+              status:
+                type: string
+                description: Status of the scan
+              lastUpdated:
+                type: string
+                format: date-time
+                description: When the status was last updated
+            required:
+            - status
+            - lastUpdated
+    subresources:
+      status: {}
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: secretreports.kubevuln.kubescape.io
+spec:
+  group: kubevuln.kubescape.io
+  names:
+    kind: SecretReport
+    listKind: SecretReportList
+    plural: secretreports
+    singular: secretreport
+    shortNames:
+    - sr
+  scope: Namespaced
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              imageTag:
+                type: string
+                description: The image tag that was scanned
+              imageName:
+                type: string
+                description: The name of the image
+              scanTime:
+                type: string
+                format: date-time
+                description: When the scan was performed
+              jobID:
+                type: string
+                description: The job ID for this scan
+              truffleHogReport:
+                type: array
+                items:
+                  type: object
+                description: The trufflehog scan results
+              secretsFound:
+                type: integer
+                description: Number of secrets found
+              reportPath:
+                type: string
+                description: Path to the local report file (fallback)
+            required:
+            - imageTag
+            - imageName
+            - scanTime
+            - jobID
+            - truffleHogReport
+            - secretsFound
+          status:
+            type: object
+            properties:
+              status:
+                type: string
+                description: Status of the scan
+              lastUpdated:
+                type: string
+                format: date-time
+                description: When the status was last updated
+            required:
+            - status
+            - lastUpdated
+    subresources:
+      status: {} 

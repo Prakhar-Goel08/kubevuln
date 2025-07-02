@@ -21,7 +21,7 @@ import (
 type TruffleHogAdapter struct {
 	truffleHogPath  string
 	scanTimeout     time.Duration
-	storage         *ScanReportStorageAdapter
+	storage         *SeparateCRDStorageAdapter
 	imageDownloader *ImageDownloader
 }
 
@@ -62,7 +62,7 @@ type TruffleHogResult struct {
 }
 
 // NewTruffleHogAdapter initializes the TruffleHogAdapter struct
-func NewTruffleHogAdapter(truffleHogPath string, scanTimeout time.Duration, storage *ScanReportStorageAdapter) *TruffleHogAdapter {
+func NewTruffleHogAdapter(truffleHogPath string, scanTimeout time.Duration, storage *SeparateCRDStorageAdapter) *TruffleHogAdapter {
 	if truffleHogPath == "" {
 		truffleHogPath = "./trufflehog" // Default to local trufflehog binary
 	}
@@ -102,9 +102,9 @@ func (t *TruffleHogAdapter) ScanImage(ctx context.Context, imageID, imageTag str
 		return nil, err
 	}
 
-	// Save to unified storage with correct imageTag (CRD or file)
+	// Save to separate CRD storage with correct imageTag
 	if t.storage != nil {
-		if err := t.storage.SaveScanReport(ctx, imageTag, imageName, jobID, nil, results, outputPath); err != nil {
+		if err := t.storage.SaveSecretReport(ctx, imageTag, imageName, jobID, results, outputPath); err != nil {
 			logger.L().Error("failed to save trufflehog report to storage with correct imageTag", helpers.Error(err))
 		}
 	}

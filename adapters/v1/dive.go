@@ -19,7 +19,7 @@ import (
 type DiveAdapter struct {
 	divePath        string
 	scanTimeout     time.Duration
-	storage         *ScanReportStorageAdapter
+	storage         *SeparateCRDStorageAdapter
 	imageDownloader *ImageDownloader
 }
 
@@ -55,7 +55,7 @@ type DiveResult struct {
 }
 
 // NewDiveAdapter initializes the DiveAdapter struct
-func NewDiveAdapter(divePath string, scanTimeout time.Duration, storage *ScanReportStorageAdapter) *DiveAdapter {
+func NewDiveAdapter(divePath string, scanTimeout time.Duration, storage *SeparateCRDStorageAdapter) *DiveAdapter {
 	if divePath == "" {
 		divePath = "./dive" // Default to local dive binary
 	}
@@ -95,9 +95,9 @@ func (d *DiveAdapter) ScanImage(ctx context.Context, imageID, imageTag string, r
 		return nil, err
 	}
 
-	// Save to unified storage with correct imageTag (CRD or file)
+	// Save to separate CRD storage with correct imageTag
 	if d.storage != nil {
-		if err := d.storage.SaveScanReport(ctx, imageTag, imageName, jobID, result, nil, outputPath); err != nil {
+		if err := d.storage.SaveDiveReport(ctx, imageTag, imageName, jobID, result, outputPath); err != nil {
 			logger.L().Error("failed to save dive report to storage with correct imageTag", helpers.Error(err))
 		}
 	}

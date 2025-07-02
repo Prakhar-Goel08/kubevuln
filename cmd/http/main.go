@@ -70,7 +70,7 @@ func main() {
 	}
 
 	// Create unified scan report storage adapter
-	scanReportStorage := v1.NewScanReportStorageAdapter(c.Namespace)
+	scanReportStorage := v1.NewSeparateCRDStorageAdapter(c.Namespace)
 
 	sbomAdapter := v1.NewSyftAdapter(c.ScanTimeout, c.MaxImageSize, c.MaxSBOMSize, c.ScanEmbeddedSboms, scanReportStorage)
 	cveAdapter := v1.NewGrypeAdapter(c.ListingURL, c.UseDefaultMatchers)

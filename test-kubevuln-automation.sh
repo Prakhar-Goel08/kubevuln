@@ -312,29 +312,52 @@ print_status "You can press Ctrl+C to stop log monitoring early"
 
 timeout 45s kubectl logs -f $POD_NAME -n $NAMESPACE --tail=30 || true
 
-# Check for CRDs
-print_status "=== Checking for ScanReport CRDs ==="
-print_status "Checking if any ScanReport CRDs were created..."
+# Check for new separate CRDs
+print_status "=== Checking for SecretScanning and DiveScanning CRDs ==="
+print_status "Checking if any SecretScanning and DiveScanning CRDs were created..."
 
-if kubectl get crd scanreports.kubevuln.kubescape.io &> /dev/null; then
-    print_success "ScanReport CRD exists"
+# Check for SecretScanning CRD
+if kubectl get crd secretscannings.kubevuln.io &> /dev/null; then
+    print_success "SecretScanning CRD exists"
     
-    SCAN_REPORTS=$(kubectl get scanreports -n $NAMESPACE --no-headers 2>/dev/null | wc -l)
-    if [ "$SCAN_REPORTS" -gt 0 ]; then
-        print_success "Found $SCAN_REPORTS ScanReport(s) in namespace $NAMESPACE"
-        kubectl get scanreports -n $NAMESPACE
+    SECRET_REPORTS=$(kubectl get secretscannings -n $NAMESPACE --no-headers 2>/dev/null | wc -l)
+    if [ "$SECRET_REPORTS" -gt 0 ]; then
+        print_success "Found $SECRET_REPORTS SecretScanning report(s) in namespace $NAMESPACE"
+        kubectl get secretscannings -n $NAMESPACE
         
-        print_status "Getting details of the most recent ScanReport..."
-        LATEST_REPORT=$(kubectl get scanreports -n $NAMESPACE --sort-by=.metadata.creationTimestamp -o name | tail -1)
-        if [ ! -z "$LATEST_REPORT" ]; then
-            print_status "Latest ScanReport details:"
-            kubectl get $LATEST_REPORT -n $NAMESPACE -o yaml | head -100
+        print_status "Getting details of the most recent SecretScanning report..."
+        LATEST_SECRET_REPORT=$(kubectl get secretscannings -n $NAMESPACE --sort-by=.metadata.creationTimestamp -o name | tail -1)
+        if [ ! -z "$LATEST_SECRET_REPORT" ]; then
+            print_status "Latest SecretScanning report details:"
+            kubectl get $LATEST_SECRET_REPORT -n $NAMESPACE -o yaml | head -100
         fi
     else
-        print_warning "No ScanReports found in namespace $NAMESPACE (they might still be processing)"
+        print_warning "No SecretScanning reports found in namespace $NAMESPACE (they might still be processing)"
     fi
 else
-    print_warning "ScanReport CRD not found - results might be stored elsewhere"
+    print_warning "SecretScanning CRD not found"
+fi
+
+# Check for DiveScanning CRD
+if kubectl get crd divescannings.kubevuln.io &> /dev/null; then
+    print_success "DiveScanning CRD exists"
+    
+    DIVE_REPORTS=$(kubectl get divescannings -n $NAMESPACE --no-headers 2>/dev/null | wc -l)
+    if [ "$DIVE_REPORTS" -gt 0 ]; then
+        print_success "Found $DIVE_REPORTS DiveScanning report(s) in namespace $NAMESPACE"
+        kubectl get divescannings -n $NAMESPACE
+        
+        print_status "Getting details of the most recent DiveScanning report..."
+        LATEST_DIVE_REPORT=$(kubectl get divescannings -n $NAMESPACE --sort-by=.metadata.creationTimestamp -o name | tail -1)
+        if [ ! -z "$LATEST_DIVE_REPORT" ]; then
+            print_status "Latest DiveScanning report details:"
+            kubectl get $LATEST_DIVE_REPORT -n $NAMESPACE -o yaml | head -100
+        fi
+    else
+        print_warning "No DiveScanning reports found in namespace $NAMESPACE (they might still be processing)"
+    fi
+else
+    print_warning "DiveScanning CRD not found"
 fi
 
 # Check for dive and trufflehog results in file system (fallback)
@@ -361,7 +384,8 @@ print_warning "Check the pod logs and CRDs over the next few minutes to see resu
 
 print_status "To continue monitoring:"
 echo "  kubectl logs -f $POD_NAME -n $NAMESPACE"
-echo "  kubectl get scanreports -n $NAMESPACE -w"
+echo "  kubectl get secretscannings -n $NAMESPACE -w"
+echo "  kubectl get divescannings -n $NAMESPACE -w"
 echo "  kubectl exec $POD_NAME -n $NAMESPACE -- ls -la /tmp/"
 
 print_success "Test automation completed successfully!" 

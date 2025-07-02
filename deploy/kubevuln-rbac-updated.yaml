@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kubevuln
+  namespace: cyberqshield
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubevuln-role
+rules:
+# Permissions for the old scanreports CRD (backward compatibility)
+- apiGroups: ["kubevuln.kubescape.io"]
+  resources: ["scanreports"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+# Permissions for the new separate CRDs
+- apiGroups: ["kubevuln.io"]
+  resources: ["secretscannings", "divescannings"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+# General Kubernetes resources
+- apiGroups: [""]
+  resources: ["pods", "services", "endpoints"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubevuln-role-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kubevuln-role
+subjects:
+- kind: ServiceAccount
+  name: kubevuln
+  namespace: cyberqshield 

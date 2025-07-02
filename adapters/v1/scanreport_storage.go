@@ -89,8 +89,8 @@ func (s *ScanReportStorageAdapter) saveScanReportToCRD(ctx context.Context, imag
 	}
 
 	// Sanitize labels to be Kubernetes-compliant
-	sanitizedImageName := sanitizeLabel(imageName)
-	sanitizedJobID := sanitizeLabel(jobID)
+	sanitizedImageName := SanitizeLabel(imageName)
+	sanitizedJobID := SanitizeLabel(jobID)
 
 	// Read raw JSON files and store them as complete JSON strings
 	var diveReportJSON string
@@ -255,8 +255,8 @@ func (s *ScanReportStorageAdapter) createTrufflehogCRD(ctx context.Context, imag
 	return nil
 }
 
-// sanitizeLabel converts a string to a Kubernetes-compliant label value
-func sanitizeLabel(value string) string {
+// SanitizeLabel converts a string to a Kubernetes-compliant label value
+func SanitizeLabel(value string) string {
 	// Replace invalid characters with hyphens
 	invalidChars := []string{"/", ":", "@", "=", "+", "&", "?", "#", "%", "!", "*", "(", ")", "[", "]", "{", "}", "|", "\\", "\"", "'", ";", ",", "<", ">", " "}
 	result := value
@@ -275,10 +275,10 @@ func sanitizeLabel(value string) string {
 
 	// Ensure it starts and ends with alphanumeric
 	if len(result) > 0 {
-		if !isAlphanumeric(rune(result[0])) {
+		if !IsAlphanumeric(rune(result[0])) {
 			result = "a" + result
 		}
-		if len(result) > 0 && !isAlphanumeric(rune(result[len(result)-1])) {
+		if len(result) > 0 && !IsAlphanumeric(rune(result[len(result)-1])) {
 			result = result + "a"
 		}
 	}
@@ -287,7 +287,7 @@ func sanitizeLabel(value string) string {
 	if len(result) > 63 {
 		result = result[:63]
 		// Ensure it ends with alphanumeric
-		if !isAlphanumeric(rune(result[len(result)-1])) {
+		if !IsAlphanumeric(rune(result[len(result)-1])) {
 			result = result[:len(result)-1] + "a"
 		}
 	}
@@ -300,8 +300,8 @@ func sanitizeLabel(value string) string {
 	return result
 }
 
-// isAlphanumeric checks if a rune is alphanumeric
-func isAlphanumeric(r rune) bool {
+// IsAlphanumeric checks if a rune is alphanumeric
+func IsAlphanumeric(r rune) bool {
 	return (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9')
 }
 

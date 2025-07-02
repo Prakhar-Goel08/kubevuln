@@ -47,11 +47,11 @@ type LayerEfficiencyMetrics struct {
 // LayerAnalyzer implements direct layer analysis without Docker archive reconstruction
 type LayerAnalyzer struct {
 	scanTimeout time.Duration
-	storage     *ScanReportStorageAdapter
+	storage     *SeparateCRDStorageAdapter
 }
 
 // NewLayerAnalyzer creates a new LayerAnalyzer instance
-func NewLayerAnalyzer(scanTimeout time.Duration, storage *ScanReportStorageAdapter) *LayerAnalyzer {
+func NewLayerAnalyzer(scanTimeout time.Duration, storage *SeparateCRDStorageAdapter) *LayerAnalyzer {
 	return &LayerAnalyzer{
 		scanTimeout: scanTimeout,
 		storage:     storage,
